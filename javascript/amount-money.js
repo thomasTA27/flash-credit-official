@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
          sessionStorage.setItem('loanAmountInSession', loanAmount);
          sessionStorage.setItem('loanDurationInSession', loanTenure);
          sessionStorage.setItem('reasonForLoan', reasonForLoan);
+        //  sessionStorage.removeItem('loanAmountInSession');
 
 
          document.location.href = "personal-info.html";
