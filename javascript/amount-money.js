@@ -31,13 +31,35 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault();
 
         // Get the values of loan amount and loan tenure
-         loanAmount = loanAmountSlider.value;
-         loanTenure = loanTenureSlider.value;
-         sessionStorage.setItem('loanAmount1', loanAmount);
-         sessionStorage.setItem('loanTenure1', loanTenure);
+         const loanAmount = loanAmountSlider.value;
+         const loanTenure = loanTenureSlider.value;
+         const selectedOption = document.querySelector('input[name="accordionChoice"]:checked');
+        //  console.log( "option is " +  selectedOption.value);
+         console.log("this is loan inside " + loanAmount);
+         
+         
+        //  const reasonForLoan = selectedOption.value;
+      
 
-         console.log("this is loan inside" + loanAmount);
+         if(selectedOption ){
+            
+            console.log("this is loan reason " + selectedOption.value);
+            
+         }
+         else{
+            alert("Please select a reason for loan");
+            return;
+         }
+         const reasonForLoan = selectedOption.value;
+        //  console.log("this is loan reason haha " + reasonForLoan);
 
-         document.location.href = "personal-info.html";//forward to personal info page
+         sessionStorage.clear();
+         sessionStorage.setItem('loanAmountInSession', loanAmount);
+         sessionStorage.setItem('loanDurationInSession', loanTenure);
+         sessionStorage.setItem('reasonForLoan', reasonForLoan);
+
+
+         document.location.href = "personal-info.html";
+
     });
 });

@@ -1,8 +1,9 @@
 
 document.addEventListener('DOMContentLoaded', function () {
+    
     // Retrieve loan amount and tenure from sessionStorage
-    const loanAmount = sessionStorage.getItem('loanAmount1');
-    const loanTenure = sessionStorage.getItem('loanTenure1');
+    const loanAmount = sessionStorage.getItem('loanAmountInSession');
+    const loanTenure = sessionStorage.getItem('loanDurationInSession');
 
     // Check if values exist
     if (loanAmount && loanTenure) {
@@ -14,13 +15,8 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
         console.error('No loan data found in sessionStorage.');
     }
-});
-
-document.addEventListener('DOMContentLoaded', function () {
 
     const continueButton = document.getElementById('person-basic-info');
-
-
     continueButton.addEventListener('click', function (event) {
         // Prevent the default navigation behavior
         event.preventDefault();
@@ -30,5 +26,4 @@ document.addEventListener('DOMContentLoaded', function () {
          document.location.href = "phone-verification.html";//forward to personal info page
     });
 
- 
 });

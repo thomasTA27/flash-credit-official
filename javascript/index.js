@@ -89,7 +89,7 @@ document.getElementById('fetchFoods').addEventListener('click', async () => {
 //       method: 'POST',
 //       headers: {
 //         'Authorization': `Basic ${apiKey}`,
-//         'Content-Type': 'application/x-www-form-urlencoded',
+//         'Content-Typ e': 'application/x-www-form-urlencoded',
 //         'basiq-version': '3.0',
 //       },
 //       body: new URLSearchParams({ 'scope': 'SERVER_ACCESS' })
