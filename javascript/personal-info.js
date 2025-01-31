@@ -74,11 +74,11 @@ document.addEventListener('DOMContentLoaded', function () {
       
         // Mobile number
         const mobileNumber = document.getElementById("phone-num-input").value;
-        if (mobileNumber === "") {
-          alert("Please specify your mobile number.");
+
+        if( !validatePhoneNumber(mobileNumber) ) {
           return;
-        }
-      
+        } 
+
         // Email
         const email = document.getElementById("email-input").value;
         if (email === "") {
@@ -90,20 +90,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const termsChecked = document.getElementById("terms") ? document.getElementById("terms").checked : true; // Optional check, if you're using it.
 
 
-        //  if (termsChecked === "") {
-        //   alert("Please accept the term and condition.");
-        //   return;
-        // }
-      
         if (termsChecked) {
             // Collect form data into an object for further use or validation
-            const formData = {
+            const borrowerData = {
               title,
               firstName,
               middleName,
               lastName,
               dob,
-              address: address || "N/A", // Set "N/A" if address is empty
+              address: address , // Set "N/A" if address is empty
               apt: apt || "N/A", // Set "N/A" if apt is empty
               city: city || "N/A", // Set "N/A" if city is empty
               state: state || "N/A", // Set "N/A" if state is empty
@@ -113,30 +108,89 @@ document.addEventListener('DOMContentLoaded', function () {
               email,
               
             };
-        
-            console.log("Form data:", formData);
-        
-            // Save values to sessionStorage (you can adjust these values if you prefer different keys)
-            sessionStorage.setItem('titleSession', title);
-            sessionStorage.setItem('firstNameSession', firstName);
-            sessionStorage.setItem('middleNameSession', middleName);
-            sessionStorage.setItem('lastNameSession', lastName);
-            sessionStorage.setItem('dobSession', dob);
-            sessionStorage.setItem('addressSession', address || "N/A");
-            sessionStorage.setItem('aptSession', apt || "N/A");
-            sessionStorage.setItem('citySession', city || "N/A");
-            sessionStorage.setItem('stateSession', state || "N/A");
-            sessionStorage.setItem('postalCodeSession', postalCode || "N/A");
-            sessionStorage.setItem('countrySession', country || "N/A");
-            sessionStorage.setItem('mobileNumberSession', mobileNumber);
-            sessionStorage.setItem('emailSession', email);
 
-            document.location.href = "phone-verification.html";
+    
+
+      function sendBorrowerData(borrowerData) {
+        fetch('http://localhost:8080/flash-credit/BorrowerServlet/CreateBorrower', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(borrowerData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json(); // Parse JSON response
+        })
+        .then(data => {
+            console.log("Server response:", data);
+    
+            // Extract tokenbBounce from response
+            if (data.tokenbBounce) {
+                console.log("Received tokenbBounce:", data.tokenbBounce);
+
+                sessionStorage.setItem('tokenBounce', data.tokenbBounce);
+
+
+
+                sessionStorage.setItem('titleSession', borrowerData.title);
+                                sessionStorage.setItem('firstNameSession', borrowerData.firstName);
+                     sessionStorage.setItem('middleNameSession', borrowerData.middleName);
+                                sessionStorage.setItem('lastNameSession', borrowerData.lastName);
+                                     sessionStorage.setItem('dobSession', borrowerData.dob);
+                                sessionStorage.setItem('addressSession', borrowerData.address);
+                                sessionStorage.setItem('aptSession', borrowerData.apt || "N/A");
+                                sessionStorage.setItem('citySession', borrowerData.city || "N/A");
+                                sessionStorage.setItem('stateSession', borrowerData.state || "N/A");
+                                sessionStorage.setItem('postalCodeSession', borrowerData.postalCode || "N/A");
+                                sessionStorage.setItem('countrySession', borrowerData.country || "N/A");
+                                sessionStorage.setItem('mobileNumberSession', borrowerData.mobileNumber);
+
+                                document.location.href = "bank-input.html";
+
+
+
+            } else {
+                console.warn("tokenbBounce not found in response.");
+            }
+        })
+        .catch(error => {
+            console.error("Error sending borrower data:", error);
+        });
+    }
+
+          sendBorrowerData(borrowerData);
+          
+  
+
+        
         
           // You can then proceed to send this data to a server or further validation
         } else {
           alert("You must accept the terms and conditions to proceed.");
         }
       });
+
+      function validatePhoneNumber(phoneNumber) {
+        // Define the regex pattern for validation
+        const validPattern = /^04\d{8}$/;
+        
+
+        if(phoneNumber === "") {
+            alert("Please enter a valid phone number");
+            return false;
+        }
+        else if (validPattern.test(phoneNumber)) {
+            return true; // Valid number
+        } else {
+            alert(`${phoneNumber} is invalid plesae make sure it start with 04 and have 10 digits`);
+            return false; 
+        }
+    }
+
+    
 
 });
