@@ -26,21 +26,22 @@ class PopupManager {
             return;
         }
     }
-
     startMonitoring() {
         this.popupTimer = setInterval(() => {
             try {
                 // Check if popup is closed
                 if (!this.popup || this.popup.closed) {
                     console.log("Popup was closed by the user bye");
+
+
+let basiqUserId = sessionStorage.getItem('basiqUserId');
+
+sendBorrowerData(basiqUserId);
+                    //we shouuld get the active or not
                     this.cleanup();
                     return;
                 }
-
                 console.log("Popup is still open hi hi ");
-
-
-
 				// const currentUrl = this.popup.location.href;
 
 				// console.log( "this is "+ currentUrl)
@@ -52,9 +53,6 @@ class PopupManager {
 				//   this.popup.close();
 				//   this.cleanup();
 				// }
-
-
-			
             } catch (error) {
                 // Cross-origin errors will occur while the popup is on another domain
                 // This is normal and we should continue monitoring
@@ -76,21 +74,101 @@ class PopupManager {
 }
 
 
+var connection = null;
+
+function sendBorrowerData(basiqUserId) {
+    fetch('http://localhost:8080/flash-credit/BorrowerServlet/getBorrowerConnectionstatus', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify( { basiqUserId : basiqUserId } )
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json(); // Parse JSON response
+    })
+    .then(data => {
+        console.log("Server response:", data);
+
+
+        if (data.status) {
+            console.log("Received status:", data.status);
+
+            
+            sessionStorage.setItem('statusOfConnection', data.status);
+
+            connection = data.status;
+
+
+//    if(connection === "active"){
+    
+
+//     console.log("bye bitch");
+//     document.location.href = "phone-verification.html";
+
+
+//    }
+
+if (connection === "active") {
+    let countdown = 3; // Set the initial countdown time
+    const countdownDisplay = document.getElementById('countdown'); // Ensure you have an element to display the countdown
+
+    // Update the countdown every second
+    const countdownInterval = setInterval(() => {
+        countdownDisplay.textContent = countdown; // Update the countdown text on the page
+        countdown--;
+
+        // When the countdown reaches 0, change the page
+        if (countdown < 0) {
+            clearInterval(countdownInterval); // Stop the countdown
+            document.location.href = "phone-verification.html"; // Redirect to the new page
+        }
+    }, 1000); // Run every 1 second
+}
+
+
+
+        } else {
+            console.warn("tokenbBounce not found in response.");
+        }
+    })
+    .catch(error => {
+        console.error("Error sending borrower data:", error);
+    });
+}
+
+
 document.addEventListener('DOMContentLoaded', function() {
+    const loanAmount = sessionStorage.getItem('loanAmountInSession');
+    const loanTenure = sessionStorage.getItem('loanDurationInSession');
 
+    // Check if values exist
+    if (loanAmount && loanTenure) {
+        console.log(`Loan Amount: AUD ${loanAmount}`);
+        console.log(`Loan Tenure: ${loanTenure} months`);
+        // You can also display these values on the page if needed
+        document.getElementById('temp-loan-use-info').textContent = 
+            `Loan Amount: AUD ${loanAmount}, Loan Tenure: ${loanTenure} months`;
+    } else {
+        console.error('No loan data found in sessionStorage.');
+    }
 
-
-
-// Create an instance of the popup manager
-const popupManager = new PopupManager();
-
-// Add click event listener to the button
 document.getElementById("test").addEventListener("click", () => {
-    popupManager.openPopup("https://docs.google.com/document/u/0/");
+ 
+
+
+    const popupManager = new PopupManager();
+
+    const tokenBouncId = sessionStorage.getItem('tokenBounce');
+
+
+    popupManager.openPopup("https://consent.basiq.io/home?token=" + tokenBouncId);
+
+
 });
-
-   
-
 
 });
 

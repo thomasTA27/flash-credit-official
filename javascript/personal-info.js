@@ -135,6 +135,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 sessionStorage.setItem('tokenBounce', data.tokenbBounce);
 
 
+            console.log("Received basiqId:", data.basiqUserId);
+            sessionStorage.setItem('basiqUserId', data.basiqUserId);
+
+
 
                 sessionStorage.setItem('titleSession', borrowerData.title);
                                 sessionStorage.setItem('firstNameSession', borrowerData.firstName);
